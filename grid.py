@@ -106,9 +106,11 @@ class Solver:
         self.snapshot = []
         self.bigGrid = BigGrid()
 
+    def set_big_grid(self, big_grid):
+        self.big_grid = big_grid
+        # print(self.big_grid)
 
     def fill_in_possibilities(self, small_grid):
-
         current_numbers = []
         for index in range(0, self.length**2):
             for small in small_grid.grid:
@@ -210,9 +212,10 @@ if __name__ == '__main__':
     bigGrid = BigGrid()
     bigGrid.fill_in_data("data.txt")
     solver = Solver()
+    solver.set_big_grid(bigGrid)
     # solver.fill_in_possibilities()
     solver.calculate_possibility()
-    # solver.execute_filter()
+    solver.execute_filter()
     bigGrid.display_board()
     # print("\n")
     # solver.ax_two_elements_possibility()
