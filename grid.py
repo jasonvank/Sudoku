@@ -132,7 +132,7 @@ class Solver:
     def list_copy(self):
         self.current_list = copy.deepcopy(self.bigGrid)
         self.snapshot_list.append(self.current_list)
-        print(self.snapshot_list)
+        # print(self.snapshot_list)
 
     def fill_in_possibilities(self, small_grid):
         current_numbers = []
@@ -194,21 +194,25 @@ class Solver:
 
     def locate_grid_data(self):
         max_two_elements_grid = self.max_two_elements_possibility()
-        count = []
+        count = 0
+        grid_inside_number = -1
         for i in range(0, self.length ** 2):
             if len(self.bigGrid.board[max_two_elements_grid].grid[i].data) == 2:
-                count.append(i)
-        return count
+                count+=1
+                grid_inside_number = i
+                if count == 1:
+                    break
+        return i
 
-    def guess_possibilities(self):
+    def guess_possibilities(self, tries):
         grid_number = self.max_two_elements_possibility()
         count = self.locate_grid_data()
-        self.list_copy()
-        for i in range(len(count)):
-            item = count[i]
-            self.bigGrid.board[grid_number].grid[item].data = [self.bigGrid.board[grid_number].grid[item].data[0]]
-            # print("hello")
-            self.execute_filter()
+        # self.list_copy()
+        # for i in range(len(count)):
+        # item = count[i]
+        # print(self.bigGrid.board[grid_number].grid[count].data[1])
+        self.bigGrid.board[grid_number].grid[count].data = [self.bigGrid.board[grid_number].grid[count].data[tries]]
+        self.execute_filter()
 
     def is_all_die(self):
         all_data = self.bigGrid.get_all_rows()
@@ -227,15 +231,14 @@ class Solver:
     def cont_filter(self):
         while True:
             self.list_copy()
-            count = 0
-            self.guess_possibilities()
+            tries = 0
+            self.guess_possibilities(tries)
             if self.is_all_die():
-                # print("die")
-                count += 1
-                self.bigGrid = self.snapshot_list[count-1]
 
-            if self.is_all_success():
+                # self.bigGrid = self.snapshot_list[count-1]
                 break
+            # if self.is_all_success():
+            #     break
 
 
 if __name__ == '__main__':
