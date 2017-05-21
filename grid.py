@@ -130,7 +130,7 @@ class Solver:
         self.bigGrid = big_grid
 
     def list_copy(self):
-        self.current_list = copy.deepcopy(self.bigGrid.board)
+        self.current_list = copy.deepcopy(self.bigGrid)
         self.snapshot_list.append(self.current_list)
         print(self.snapshot_list)
 
@@ -203,7 +203,7 @@ class Solver:
     def guess_possibilities(self):
         grid_number = self.max_two_elements_possibility()
         count = self.locate_grid_data()
-        # self.list_copy()
+        self.list_copy()
         for i in range(len(count)):
             item = count[i]
             self.bigGrid.board[grid_number].grid[item].data = [self.bigGrid.board[grid_number].grid[item].data[0]]
@@ -232,7 +232,7 @@ class Solver:
             if self.is_all_die():
                 # print("die")
                 count += 1
-                self.bigGrid.board = self.snapshot_list[count-1]
+                self.bigGrid = self.snapshot_list[count-1]
 
             if self.is_all_success():
                 break
