@@ -100,15 +100,39 @@ class BigGrid:
             print(utilities.get_fixed_length_str(str(grid.data), 22), end=' ')
 
 
+# class Snapshot:
+#     def __init__(self, current_list_index=0):
+#         self.operatingSquareIndex = 0
+#         self.operatingPossibilityIndex = -1
+#         self.failCountOnThisSnapshot = 0
+#         self.snapshot_list = []
+#         self.current_list_index = current_list_index
+#         self.current_list = []
+#         self.bigGrid = BigGrid()
+#
+#     def set_big_grid(self, big_grid):
+#         self.bigGrid = big_grid
+#
+#     def list_copy(self):
+#         self.current_list = copy.deepcopy(self.bigGrid.board)
+#         self.snapshot_list.append(self.current_list)
+#         print(self.snapshot_list)
+
+
 class Solver:
     def __init__(self, length=3):
         self.length = length
-        self.snapshot = []
         self.bigGrid = BigGrid()
+        self.snapshot_list = []
+        self.current_list = []
 
     def set_big_grid(self, big_grid):
-        self.big_grid = big_grid
-        # print(self.big_grid)
+        self.bigGrid = big_grid
+
+    def list_copy(self):
+        self.current_list = copy.deepcopy(self.bigGrid.board)
+        self.snapshot_list.append(self.current_list)
+        print(self.snapshot_list)
 
     def fill_in_possibilities(self, small_grid):
         current_numbers = []
@@ -161,7 +185,7 @@ class Solver:
         for i in range(0, self.length ** 2):
             count = 0
             for j in range(0, self.length ** 2):
-                if len(self.board[i].grid[j].data) == 2:
+                if len(self.bigGrid.board[i].grid[j].data) == 2:
                     count += 1
             if count > max_two_elements:
                 max_two_elements = count
@@ -172,39 +196,46 @@ class Solver:
         max_two_elements_grid = self.max_two_elements_possibility()
         count = []
         for i in range(0, self.length ** 2):
-            if len(self.board[max_two_elements_grid].grid[i].data) == 2:
+            if len(self.bigGrid.board[max_two_elements_grid].grid[i].data) == 2:
                 count.append(i)
         return count
 
     def guess_possibilities(self):
         grid_number = self.max_two_elements_possibility()
         count = self.locate_grid_data()
+        # self.list_copy()
         for i in range(len(count)):
             item = count[i]
-            self.board[grid_number].grid[item].data = [self.board[grid_number].grid[item].data[0]]
+            self.bigGrid.board[grid_number].grid[item].data = [self.bigGrid.board[grid_number].grid[item].data[0]]
+            # print("hello")
             self.execute_filter()
 
     def is_all_die(self):
-        all_data = self.get_all_rows()
+        all_data = self.bigGrid.get_all_rows()
         for i in range(self.length**2**2):
             if len(all_data[i].data) == 0:
                 return True
         return False
 
+    def is_all_success(self):
+        all_data = self.bigGrid.get_all_rows()
+        for i in range(self.length**2**2):
+            if len(all_data[i].data) == 1 and all_data[i].data != 0:
+                return True
+        return False
+
     def cont_filter(self):
         while True:
+            self.list_copy()
+            count = 0
             self.guess_possibilities()
             if self.is_all_die():
-                # self.display_board()
-                print("die")
+                # print("die")
+                count += 1
+                self.bigGrid.board = self.snapshot_list[count-1]
+
+            if self.is_all_success():
                 break
-
-
-    # def prepare_next_try(self):
-    #     self.snapshot = BigGrid.board
-    #     current_snapshot = self.snapshot[len(self.snapshot)-1]
-    #     next_snapshot = copy.deepcopy(current_snapshot)
-
 
 
 
@@ -213,23 +244,22 @@ if __name__ == '__main__':
     bigGrid.fill_in_data("data.txt")
     solver = Solver()
     solver.set_big_grid(bigGrid)
-    # solver.fill_in_possibilities()
     solver.calculate_possibility()
     solver.execute_filter()
+
+    solver.max_two_elements_possibility()
+    solver.guess_possibilities()
+    solver.cont_filter()
+
+    # snapshot = Snapshot()
     bigGrid.display_board()
-    # print("\n")
-    # solver.ax_two_elements_possibility()
-    # print("\n")
-    # print("\n")
-    # solver.guess_possibilities()
-    # print("\n")
-    # print("\n")
-    # bigGrid.display_board()
-    # solver.cont_filter()
-    # solver.display_board()
+    print("\n")
+
+    # snapshot.set_big_grid(bigGrid)
+    # snapshot.list_copy()
+    # snapshot.deepcopy()
     # solver.snapshot()
-    # solver.grid_small_square()
-    # # solver.grid_possibilities()
+    # solver.grid_possibilities()
     # solver.execute_filter()
     # solver = Solver()
     # solver.check()
