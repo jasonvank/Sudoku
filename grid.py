@@ -238,7 +238,6 @@ class Solver:
                 break
 
 
-
 if __name__ == '__main__':
     bigGrid = BigGrid()
     bigGrid.fill_in_data("data.txt")
